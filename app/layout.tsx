@@ -5,6 +5,7 @@ import { Navbar } from "./components/Navbar";
 import { Marquee } from "./components/Marquee";
 import { Toaster } from "sonner";
 import { CartSheet } from "@/components/cart-sheet";
+import { Footer } from "@/components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +36,10 @@ export default function RootLayout({
         <CartSheet />
         <Marquee />
         <Navbar />
-        {children}
+        <div className="relative z-10 bg-zinc-950 min-h-screen pb-20">
+          {children}
+        </div>
+        <Footer />
       </body>
     </html>
   );
