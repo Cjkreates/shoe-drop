@@ -80,7 +80,13 @@ export const useCartStore = create<CartStore>()(
     }),
     {
       name: "shoe-drop-storage",
-      storage: createJSONStorage(() => (typeof window !== "undefined" ? localStorage : undefined)),
+      storage: typeof window !== "undefined" 
+        ? createJSONStorage(() => localStorage)
+        : {
+            getItem: () => null,
+            setItem: () => {},
+            removeItem: () => {},
+          },
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true);
       },
