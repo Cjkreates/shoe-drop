@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { PRODUCTS } from "@/lib/products";
-import { formatCurrency } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils";
 
 export default function Home() {
   return (
@@ -75,7 +75,7 @@ export default function Home() {
                 </div>
                 <div className="p-4 md:p-6">
                   <h3 className="text-lg md:text-xl font-bold uppercase mb-2">{product.name}</h3>
-                  <p className="text-zinc-400">{formatCurrency(product.price)}</p>
+                  <p className="text-zinc-400">{formatPrice(product.price)}</p>
                 </div>
               </motion.div>
             </Link>

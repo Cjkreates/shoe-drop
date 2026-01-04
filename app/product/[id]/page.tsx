@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { PRODUCTS } from "@/lib/products";
 import { useCartStore } from "@/store/cart-store";
-import { formatCurrency } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils";
 
 export default function ProductPage() {
   const params = useParams();
@@ -80,7 +80,7 @@ const ProductDetail = ({ product }: { product: typeof PRODUCTS[0] }) => {
           <h1 className="text-5xl font-bold uppercase tracking-tight mb-4 text-zinc-50">
             {product.name}
           </h1>
-          <p className="text-2xl text-zinc-400 mb-8">{formatCurrency(product.price)}</p>
+          <p className="text-2xl text-zinc-400 mb-8">{formatPrice(product.price)}</p>
 
           <div className="mb-8">
             <p className="text-sm uppercase font-bold mb-4 text-zinc-50">Size</p>
