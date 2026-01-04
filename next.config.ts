@@ -9,13 +9,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  experimental: {
-    turbopack: {
-      resolveAlias: {
-        // Ensure we resolve from the correct directory
-      },
-    },
-  },
 };
 
 export default nextConfig;
