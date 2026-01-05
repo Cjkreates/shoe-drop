@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     locale: "en_KE",
     siteName: "AERO",
     images: [
-      `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/opengraph-image",
+      `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/opengraph-image`,
     ],
   },
   twitter: {
