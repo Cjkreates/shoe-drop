@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { useCartStore } from "@/store/cart-store";
 import { formatPrice } from "@/lib/utils";
 import { usePaystackPayment } from "react-paystack";
+import { saveOrder } from "@/app/actions/save-order";
 
 export const CartSheet = () => {
   const router = useRouter();
@@ -44,7 +45,18 @@ export const CartSheet = () => {
   const initializePayment = usePaystackPayment(config);
 
   // Handle Success
-  const onSuccess = () => {
+  const onSuccess = async () => {
+    try {
+      // Save order to Supabase before clearing cart
+      await saveOrder({
+        email: email.trim() || "",
+        amount: totalAmount,
+        items,
+      });
+    } catch (err) {
+      console.error("saveOrder failed", err);
+    }
+
     clearCart();
     toggleCart(); // Close the drawer
     router.push("/success");
