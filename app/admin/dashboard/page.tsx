@@ -7,8 +7,7 @@ export const revalidate = 0; // dynamic
 
 export default async function DashboardPage() {
   // Simple auth gate
-  const cookieStore = cookies();
-  const session = cookieStore.get("admin_session");
+  const session = cookies().get("admin_session");
   if (!session?.value) {
     redirect("/admin");
   }

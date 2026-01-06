@@ -1,0 +1,15 @@
+.og-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: #111;
+  color: #fff;
+}
+
+.og-text {
+  font-size: 100px;
+  font-weight: 900;
+  text-transform: uppercase;
+}

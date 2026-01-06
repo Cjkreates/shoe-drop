@@ -30,9 +30,3 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
   return <ProductClient product={product} />;
 }
-"use client";
-
-import { useState } from "react";
-import { useParams, notFound } from "next/navigation";
-
-import { motion } from "framer-motion";

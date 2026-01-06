@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useCartStore } from "@/store/cart-store";
 import { formatPrice } from "@/lib/utils";
 
-const ProductDetail = ({ product }: { product: any }) => {
+const ProductClient = ({ product }: { product: any }) => {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [shake, setShake] = useState(false);
   const { addItem, toggleCart } = useCartStore();
@@ -105,4 +105,4 @@ const ProductDetail = ({ product }: { product: any }) => {
   );
 };
 
-export default ProductDetail;
+export default ProductClient;
