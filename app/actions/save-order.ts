@@ -1,19 +1,23 @@
 "use server";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
+
+export type CartItem = {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  size: string;
+  quantity: number;
+};
 
 type SaveOrderInput = {
   email: string;
   amount: number;
-  items: any[];
+  items: CartItem[];
 };
 
 export async function saveOrder({ email, amount, items }: SaveOrderInput) {
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
-    );
-
     const { error } = await supabase.from("orders").insert([{ email, amount, items }]);
 
     if (error) {
