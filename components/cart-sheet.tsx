@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { ShoppingBag, Plus, Minus } from "lucide-react";
+import { ShoppingBag, Plus, Minus, Trash2 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
@@ -15,16 +15,15 @@ import { saveOrder } from "@/app/actions/save-order";
 
 export const CartSheet = () => {
   const router = useRouter();
-  const { items, isOpen, toggleCart, updateQuantity, removeItem, _hasHydrated, clearCart } = useCartStore();
+  // Note: Ensure your store actually exports _hasHydrated. If not, remove it from here.
+  const { items, isOpen, toggleCart, updateQuantity, removeItem, clearCart } = useCartStore();
+  
   const [email, setEmail] = useState("");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    useCartStore.persist.rehydrate();
     setMounted(true);
   }, []);
-
-  if (!_hasHydrated) return null;
 
   // Calculate Total in KES (with auto-conversion for prices < 5000)
   const totalAmount = items.reduce((total, item) => {
@@ -36,18 +35,18 @@ export const CartSheet = () => {
   const config = {
     reference: new Date().getTime().toString(),
     email: email.trim() || "user@example.com",
-    amount: totalAmount * 100, // Paystack expects amount in Kobo/Cents (Multiply by 100)
+    amount: totalAmount * 100, // Paystack expects amount in Kobo/Cents
     publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "",
     currency: "KES",
   };
 
-  // Initialize the Hook (must be called unconditionally)
+  // Initialize the Hook
   const initializePayment = usePaystackPayment(config);
 
   // Handle Success
   const onSuccess = async () => {
     try {
-      // Save order to Supabase before clearing cart
+      // Save order to Supabase
       await saveOrder({
         email: email.trim() || "",
         amount: totalAmount,
@@ -58,13 +57,16 @@ export const CartSheet = () => {
     }
 
     clearCart();
-    toggleCart(); // Close the drawer
+    toggleCart(); 
     router.push("/success");
   };
 
   const onClose = () => {
     console.log("Payment closed");
   };
+
+  // Prevent hydration mismatch
+  if (!mounted) return null;
 
   return (
     <Sheet open={isOpen} onOpenChange={toggleCart}>
@@ -98,20 +100,38 @@ export const CartSheet = () => {
                       <h3 className="font-bold uppercase text-sm mb-1">{item.name}</h3>
                       <p className="text-xs text-zinc-400 mb-2">Size: {item.size}</p>
                       <p className="text-sm font-bold">{formatPrice(item.price)}</p>
+                      
                       <div className="flex items-center gap-2 mt-2">
-                        <button
+                        <Button
+                          variant="outline"
+                          size="sm"
                           onClick={() => updateQuantity(item.id, item.size, -1)}
-                          className="w-6 h-6 flex items-center justify-center border border-zinc-700 hover:border-zinc-500 transition-colors"
+                          className="w-6 h-6 p-0 border-zinc-700 hover:border-zinc-500"
+                          aria-label="Decrease quantity"
                         >
                           <Minus className="w-3 h-3" />
-                        </button>
+                        </Button>
                         <span className="text-sm w-8 text-center">{item.quantity}</span>
-                        <button
+                        <Button
+                          variant="outline"
+                          size="sm"
                           onClick={() => updateQuantity(item.id, item.size, 1)}
-                          className="w-6 h-6 flex items-center justify-center border border-zinc-700 hover:border-zinc-500 transition-colors"
+                          className="w-6 h-6 p-0 border-zinc-700 hover:border-zinc-500"
+                          aria-label="Increase quantity"
                         >
                           <Plus className="w-3 h-3" />
-                        </button>
+                        </Button>
+                        
+                        {/* Remove Button */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeItem(item.id, item.size)}
+                          className="ml-auto w-6 h-6 p-0 text-zinc-500 hover:text-red-500"
+                          aria-label="Remove item from cart"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -125,7 +145,6 @@ export const CartSheet = () => {
                 <span>{formatPrice(totalAmount)}</span>
               </div>
 
-              {/* Email Input for Receipt */}
               <Input
                 type="email"
                 placeholder="Enter email for receipt"
@@ -134,12 +153,11 @@ export const CartSheet = () => {
                 className="bg-zinc-900 border-zinc-700 text-zinc-50 placeholder-zinc-500 focus:border-zinc-500 uppercase text-sm"
               />
 
-              {/* THE FIXED BUTTON */}
               <Button
                 className="w-full h-12 text-lg bg-zinc-50 hover:bg-zinc-200 text-zinc-950 font-bold uppercase rounded-none"
-                disabled={!email.trim() || items.length === 0 || !mounted}
+                disabled={!email.trim() || items.length === 0}
                 onClick={() => {
-                  if (mounted && email.trim()) {
+                  if (email.trim()) {
                     initializePayment({ onSuccess, onClose });
                   }
                 }}
